@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZUI ZẺ - Ultimate Birthday Card</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url("./image.jpg");
+            background-size: cover;
+            background-position: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            position: relative;
+            animation: backgroundShift 10s ease-in-out infinite;
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            animation: confetti-fall 3s linear infinite;
+        }
+
+        .confetti:nth-child(odd) {
+            background: linear-gradient(45deg, #f7b731, #5f27cd);
+            animation-duration: 3.5s;
+        }
+
+        .confetti:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        /* 3D Floating Particles */
+        .particle-3d {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float3d 8s infinite ease-in-out;
+            filter: blur(0.5px);
+        }
+
+        .particle-3d:nth-child(1) { width: 15px; height: 15px; background: radial-gradient(circle, #ff6b6b, #ff4757); top: 15%; left: 10%; animation-delay: 0s; }
+        .particle-3d:nth-child(2) { width: 12px; height: 12px; background: radial-gradient(circle, #4ecdc4, #00cec9); top: 25%; left: 85%; animation-delay: 1s; }
+        .particle-3d:nth-child(3) { width: 18px; height: 18px; background: radial-gradient(circle, #45b7d1, #74b9ff); top: 65%; left: 15%; animation-delay: 2s; }
+        .particle-3d:nth-child(4) { width: 20px; height: 20px; background: radial-gradient(circle, #f7b731, #fdcb6e); top: 75%; left: 80%; animation-delay: 3s; }
+        .particle-3d:nth-child(5) { width: 14px; height: 14px; background: radial-gradient(circle, #5f27cd, #a29bfe); top: 35%; left: 70%; animation-delay: 4s; }
+
+        .card {
+            width: 480px;
+            height: 650px;
+            background: 
+                linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border-radius: 35px;
+            backdrop-filter: blur(25px) saturate(180%);
+            box-shadow: 
+                0 35px 70px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 0 100px rgba(255, 255, 255, 0.1);
+            position: relative;
+            text-align: center;
+            padding: 35px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: cardHover 6s ease-in-out infinite, cardGlow 4s ease-in-out infinite;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 
+                0 50px 100px rgba(0, 0, 0, 0.4),
+                0 0 150px rgba(255, 255, 255, 0.2);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 3s ease-in-out infinite;
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(78, 205, 196, 0.1) 0%, transparent 50%);
+            border-radius: 35px;
+            z-index: -1;
+        }
+
+        .card-header {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 25px;
+            background: 
+                linear-gradient(45deg, rgba(255, 107, 107, 0.2), rgba(78, 205, 196, 0.2), rgba(69, 183, 209, 0.2));
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .floating-emojis {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoji {
+            position: absolute;
+            font-size: 45px;
+            animation: emojiFloat3D 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .emoji:hover {
+            transform: scale(1.3) rotate(15deg);
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+        }
+
+        .emoji:nth-child(1) { top: 15%; left: 20%; animation-delay: 0s; }
+        .emoji:nth-child(2) { top: 25%; right: 25%; animation-delay: 0.5s; }
+        .emoji:nth-child(3) { bottom: 30%; left: 25%; animation-delay: 1s; }
+        .emoji:nth-child(4) { bottom: 20%; right: 20%; animation-delay: 1.5s; }
+
+        .main-emoji {
+            font-size: 100px;
+            z-index: 2;
+            animation: mainEmojiPulse3D 2.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6));
+        }
+
+        .card-body {
+            padding: 0;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .neon-text {
+            font-size: 38px;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f7b731, #5f27cd, #ff9ff3);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 25px 0;
+            animation: 
+                gradientShift 4s ease infinite,
+                textBounce 3s ease-in-out infinite,
+                textGlow3D 2s ease-in-out infinite alternate;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .neon-text:hover {
+            animation-duration: 0.5s;
+            transform: scale(1.05);
+        }
+
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink 1s infinite;
+        }
+
+        .description {
+            font-size: 19px;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.8;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+            margin: 25px 0;
+            font-weight: 400;
+            letter-spacing: 0.6px;
+            animation: fadeInUp 2s ease-out;
+        }
+
+        .highlight {
+            color: #f7b731;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(247, 183, 49, 0.5);
+            animation: highlightPulse 2s ease-in-out infinite;
+        }
+
+        .bottom-section {
+            margin-top: 30px;
+            animation: fadeInUp 3s ease-out;
+        }
+
+        .bottom-emoji {
+            font-size: 70px;
+            animation: bottomEmojiSpin 5s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .bottom-emoji:hover {
+            transform: scale(1.2) rotate(360deg);
+            animation-duration: 1s;
+        }
+
+        .birthday-button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            animation: buttonFloat 3s ease-in-out infinite;
+        }
+
+        .birthday-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+        }
+
+        /* Magic Sparkles */
+        .magic-sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: magicSparkle 3s ease-in-out infinite;
+        }
+
+        .magic-sparkle:nth-child(1) { top: 10%; left: 80%; animation-delay: 0s; }
+        .magic-sparkle:nth-child(2) { top: 20%; left: 15%; animation-delay: 0.5s; }
+        .magic-sparkle:nth-child(3) { top: 60%; left: 85%; animation-delay: 1s; }
+        .magic-sparkle:nth-child(4) { top: 75%; left: 20%; animation-delay: 1.5s; }
+        .magic-sparkle:nth-child(5) { top: 40%; left: 90%; animation-delay: 2s; }
+        .magic-sparkle:nth-child(6) { top: 85%; left: 10%; animation-delay: 2.5s; }
+
+        /* Advanced Animations */
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @keyframes float3d {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) rotateY(0deg) rotateX(0deg); 
+                opacity: 0.7; 
+            }
+            25% { 
+                transform: translateY(-30px) translateX(20px) rotateY(90deg) rotateX(45deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: translateY(-60px) translateX(0px) rotateY(180deg) rotateX(90deg); 
+                opacity: 0.8; 
+            }
+            75% { 
+                transform: translateY(-30px) translateX(-20px) rotateY(270deg) rotateX(135deg); 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes cardHover {
+            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            25% { transform: translateY(-5px) rotateX(2deg) rotateY(1deg); }
+            50% { transform: translateY(-10px) rotateX(0deg) rotateY(-1deg); }
+            75% { transform: translateY(-5px) rotateX(-2deg) rotateY(1deg); }
+        }
+
+        @keyframes cardGlow {
+            0%, 100% { box-shadow: 0 35px 70px rgba(0, 0, 0, 0.3), 0 0 100px rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 35px 70px rgba(0, 0, 0, 0.3), 0 0 150px rgba(255, 255, 255, 0.2); }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes emojiFloat3D {
+            0%, 100% { 
+                transform: translateY(0px) scale(1) rotate(0deg) rotateY(0deg); 
+                filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)); 
+            }
+            33% { 
+                transform: translateY(-20px) scale(1.1) rotate(5deg) rotateY(120deg); 
+                filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.7)); 
+            }
+            66% { 
+                transform: translateY(-10px) scale(1.05) rotate(-3deg) rotateY(240deg); 
+                filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6)); 
+            }
+        }
+
+        @keyframes mainEmojiPulse3D {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg) rotateY(0deg); 
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6)); 
+            }
+            50% { 
+                transform: scale(1.3) rotate(10deg) rotateY(180deg); 
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.9)); 
+            }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes textBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes textGlow3D {
+            from { 
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 40px rgba(255, 107, 107, 0.2)); 
+            }
+            to { 
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 60px rgba(78, 205, 196, 0.3)); 
+            }
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            0%, 50% { border-right: 3px solid transparent; }
+            51%, 100% { border-right: 3px solid #fff; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% { text-shadow: 0 0 15px rgba(247, 183, 49, 0.5); }
+            50% { text-shadow: 0 0 25px rgba(247, 183, 49, 0.8), 0 0 35px rgba(247, 183, 49, 0.3); }
+        }
+
+        @keyframes bottomEmojiSpin {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-15deg) scale(1.15); }
+            50% { transform: rotate(0deg) scale(1.2); }
+            75% { transform: rotate(15deg) scale(1.15); }
+        }
+
+        @keyframes buttonFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes magicSparkle {
+            0%, 100% { 
+                transform: scale(0) rotate(0deg); 
+                opacity: 0; 
+                background: white; 
+            }
+            25% { 
+                transform: scale(1) rotate(90deg); 
+                opacity: 1; 
+                background: #ff6b6b; 
+            }
+            50% { 
+                transform: scale(1.5) rotate(180deg); 
+                opacity: 0.8; 
+                background: #4ecdc4; 
+            }
+            75% { 
+                transform: scale(1) rotate(270deg); 
+                opacity: 1; 
+                background: #f7b731; 
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .card {
+                width: 92%;
+                max-width: 380px;
+                height: auto;
+                min-height: 550px;
+                padding: 25px;
+            }
+
+            .card-header {
+                height: 160px;
+                margin-bottom: 25px;
+            }
+
+            .emoji {
+                font-size: 35px;
+            }
+
+            .main-emoji {
+                font-size: 75px;
+            }
+
+            .neon-text {
+                font-size: 30px;
+                margin: 20px 0;
+            }
+            
+            .description {
+                font-size: 17px;
+                margin: 20px 0;
+            }
+
+            .bottom-emoji {
+                font-size: 55px;
+            }
+
+            .birthday-button {
+                padding: 10px 25px;
+                font-size: 15px;
+            }
+
+            .particle-3d,
+            .confetti {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Confetti Effect -->
+    <div class="confetti" style="left: 10%; animation-delay: 0s;"></div>
+    <div class="confetti" style="left: 20%; animation-delay: 0.5s;"></div>
+    <div class="confetti" style="left: 30%; animation-delay: 1s;"></div>
+    <div class="confetti" style="left: 40%; animation-delay: 1.5s;"></div>
+    <div class="confetti" style="left: 50%; animation-delay: 2s;"></div>
+    <div class="confetti" style="left: 60%; animation-delay: 2.5s;"></div>
+    <div class="confetti" style="left: 70%; animation-delay: 3s;"></div>
+    <div class="confetti" style="left: 80%; animation-delay: 0.8s;"></div>
+    <div class="confetti" style="left: 90%; animation-delay: 1.8s;"></div>
+
+    <!-- 3D Floating Particles -->
+    <div class="particle-3d"></div>
+    <div class="particle-3d"></div>
+    <div class="particle-3d"></div>
+    <div class="particle-3d"></div>
+    <div class="particle-3d"></div>
+
+    <div class="card" onclick="celebrate()">
+        <!-- Magic Sparkles -->
+        <div class="magic-sparkle"></div>
+        <div class="magic-sparkle"></div>
+        <div class="magic-sparkle"></div>
+        <div class="magic-sparkle"></div>
+        <div class="magic-sparkle"></div>
+        <div class="magic-sparkle"></div>
+        
+        <div class="card-header">
+            <div class="floating-emojis">
+                <div class="emoji" onclick="emojiClick(this)">🍕</div>
+                <div class="emoji" onclick="emojiClick(this)">🥐</div>
+                <div class="emoji" onclick="emojiClick(this)">🍔</div>
+                <div class="emoji" onclick="emojiClick(this)">🎂</div>
+                <div class="main-emoji" onclick="bigEmojiClick(this)">🎉</div>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <h1 class="neon-text typing-effect">Happy Birthday</h1>
+            <p class="description">
+                Chúc anh An một ngày sinh nhật <span class="highlight">siêu vui vẻ</span>, đầy ắp món ngon như pizza, bánh mì kẹp và bánh ngọt! <br><br>
+                <span class="highlight">Thư giãn</span> và tận hưởng ngày đặc biệt này nhé! 😎
+            </p>
+            <div class="bottom-section">
+                <div class="bottom-emoji" onclick="cakeClick(this)">🍰</div>
+                <button class="birthday-button" onclick="playBirthday()">🎵 Chúc Mừng Sinh Nhật! 🎵</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Interactive Functions
+        function celebrate() {
+            document.body.style.animation = 'none';
+            setTimeout(() => {
+                document.body.style.animation = 'backgroundShift 2s ease-in-out infinite';
+            }, 100);
+        }
+
+        function emojiClick(emoji) {
+            emoji.style.transform = 'scale(1.5) rotate(360deg)';
+            emoji.style.filter = 'drop-shadow(0 0 30px rgba(255, 255, 255, 1))';
+            setTimeout(() => {
+                emoji.style.transform = '';
+                emoji.style.filter = '';
+            }, 600);
+        }
+
+        function bigEmojiClick(emoji) {
+            emoji.style.transform = 'scale(1.8) rotate(720deg)';
+            emoji.style.filter = 'drop-shadow(0 0 50px rgba(255, 255, 255, 1))';
+            setTimeout(() => {
+                emoji.style.transform = '';
+                emoji.style.filter = '';
+            }, 1000);
+        }
+
+        function cakeClick(cake) {
+            cake.style.animation = 'none';
+            cake.style.transform = 'scale(1.3) rotate(360deg)';
+            setTimeout(() => {
+                cake.style.animation = 'bottomEmojiSpin 5s ease-in-out infinite';
+                cake.style.transform = '';
+            }, 800);
+        }
+
+        function playBirthday() {
+            const button = document.querySelector('.birthday-button');
+            button.innerHTML = '🎊 HAPPY BIRTHDAY! 🎊';
+            button.style.background = 'linear-gradient(45deg, #f7b731, #5f27cd)';
+            
+            // Create more confetti
+            for(let i = 0; i < 20; i++) {
+                createConfetti();
+            }
+            
+            setTimeout(() => {
+                button.innerHTML = '🎵 Happy Birthday 🎵';
+                button.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+            }, 3000);
+        }
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            confetti.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => {
+                confetti.remove();
+            }, 4000);
+        }
+
+        // Auto create random confetti
+        setInterval(createConfetti, 2000);
+    </script>
+</body>
+</html>
